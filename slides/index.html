@@ -1,0 +1,275 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>Stream processing et SQL</title>
+
+        <link rel="stylesheet" href="reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="reveal.js/css/theme/moon.css">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
+
+        <style type="text/css">
+            .footer-right {
+                position:absolute;
+                bottom: 0%;
+                right: 0%;
+                font-size: 70% !important
+            }
+            .footer-left {
+                position:absolute;
+                bottom: 0%;
+                left: 0%;
+                font-size: 70% !important
+            }
+            .no-shadow {
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .multi-cols {
+                display: table;
+                table-layout: fixed;
+                width: 100%;
+                text-align: left;
+            }
+            .multi-cols .col {
+                display: table-cell;
+                vertical-align: top;
+                width: 50%;
+                padding: 2% 0 2% 3%;
+                &:first-of-type { padding-left: 0; }
+            }
+        </style>
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal.js/css/print/pdf.css' : 'reveal.js/css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h1>Stream processing et SQL</h1>
+                    <h4>Bruno Bonnin</h4>
+
+                    <aside class="notes">
+                        Le SQL est un standard pour accéder vos données, donc, dans un monde orienté flux, quoi de plus normal que de retrouver le SQL pour traiter vos streams. Dans ce talk, vous découvrirez les extensions apportées à SQL par Apache Calcite pour répondre à cette problématique. Allez, un petit exemple pour la route:  `select stream * from events`
+
+                        Bonjour et merci d’être présent
+                        Bien, je vais donc vous parler de stream processing et de SQL.
+                        Alors juste un premier aparté : durant ce quickie je vais me focaliser sur apache calcite et ses apports sur le streaming. Il y a d’autres solutions mais la démarche derrière ce projet m’intéressait in peu plus.
+
+                    </aside>
+                </section>
+
+                <section data-background="#fff">
+                    <h4>About me</h4>
+
+                    <img src="img/my_technos.png" class="no-shadow">
+
+                    <p><a href="https://github.com/bbonnin">github.com/bbonnin</a></p>
+
+                    <aside class="notes">
+                        Donc je me présente, je m’appelle Bruno Bonnin, je suis développeur depuis de nombreuses années maintenant.
+                        Actuellement, quand je développe, je travaille essentiellement en Java/JS/Python, autour de technologies telles que le NoSQL et le big data (avec Hadoop, Spark et Zeppelin) et côté frontend, je travaille le plus possible avec Vue.js
+                    </aside>
+                </section>
+
+                <section data-background="#fff">
+                    <img src="img/saagie.png" class="no-shadow">
+                </section>
+
+                <section>
+                    <h4>Streams</h4>
+                    <p>Flot continue et sans fin de données</p>
+                    <div class="multi-cols">
+                        <div class="col">
+                            <ul>
+                                <li>IoT</li>
+                                <li>Monitoring</li>
+                                <li>Click streams</li>
+                            </ul>
+                        </div>
+                        <div class="col">
+                            <ul>
+                                <li>Finance</li>
+                                <li>Jeux en ligne</li>
+                                <li>...</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Pourquoi SQL in 2017 ?</h4>
+                    <p>
+                        C’est un standard !
+
+                        Largement adopté par tous (même si on peut/veut l’éviter…)
+                        Développeur
+                        Architecte data
+                        Data scientist
+                        ...
+                    </p>
+                    <p>
+                        Les streams sont des données comme les autres !
+                        Alors pourquoi ne pas utiliser SQL pour les requêter ?
+                    </p>
+
+                    <aside class="notes">
+                        MAIS avec le NoSQL, n databases => n langages de requêtes
+                        MongoDB (basé sur JSON)
+                        Cassandra (CQL)
+                        ...
+                    </aside>
+                </section>
+
+                <section>
+                    <h4>SQL vs. Stream processing</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Relational Algebra / SQL</th>
+                                <th>Stream Processing</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Relations (or tables) are bounded (multi-)sets of tuples.</td>
+                                <td>A stream is an infinite sequences of tuples.</td>
+                            </tr>
+                            <tr>
+                                <td>A query that is executed on batch data (e.g., a table in a relational database) has access to the complete input data.</td>
+                                <td>A streaming query cannot access all data when is started and has to "wait" for data to be streamed in.</td>
+                            </tr>
+                            <tr>
+                                <td>A batch query terminates after it produced a fixed sized result.</td>
+                                <td>A streaming query continuously updates its result based on the received records and never completes.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><a href="https://ci.apache.org/projects/flink/flink-docs-release-1.3/dev/table/streaming.html">ci.apache.org/projects/flink/flink-docs-release-1.3/dev/table/streaming.html</a></p>
+                </section>
+
+                <section>
+                    <h4></h4>
+                    <p>
+                    </p>
+
+                    <aside class="notes">
+                        Les streams sont des données comme les autres !
+                        Alors pourquoi ne pas utiliser le même langages pour requêter ?
+                    </aside>
+                </section>
+
+                <section>
+                    <h4></h4>
+                    <p>
+                    </p>
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+
+                <section>
+                    <h4></h4>
+                    <p>
+                    </p>
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+
+                <section>
+                    <h4></h4>
+                    <p>
+                    </p>
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+
+                <section>
+                    <h4></h4>
+                    <p>
+                    </p>
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+
+                <section>
+                    <h4></h4>
+                    <p>
+                    </p>
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+
+                <section>
+                    <h4></h4>
+                    <p>
+                    </p>
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+
+                <section>
+                    <h4></h4>
+                    <p>
+                    </p>
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+
+                <section>
+                    <h4></h4>
+                    <p>
+                    </p>
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+                
+                <div class="footer-right">
+                    <p><a href="https://twitter.com/search?q=%23devoxxfr&src=typd">#devoxxfr</a></p>
+                </div>
+                <div class="footer-left">
+                    <p><a href="https://twitter.com/_bruno_b_">@_bruno_b_</a></p>
+                </div>
+            </div>
+        </div>
+
+        <script src="reveal.js/lib/js/head.min.js"></script>
+        <script src="reveal.js/js/reveal.js"></script>
+
+        <script>
+            // More info about config & dependencies:
+            // - https://github.com/hakimel/reveal.js#configuration
+            // - https://github.com/hakimel/reveal.js#dependencies
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+                dependencies: [
+                    { src: 'reveal.js/plugin/markdown/marked.js' },
+                    { src: 'reveal.js/plugin/markdown/markdown.js' },
+                    { src: 'reveal.js/plugin/notes/notes.js', async: true },
+                    { src: 'reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+                ]
+            });
+        </script>
+    </body>
+</html>
