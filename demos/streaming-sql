@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#java -jar target/streaming-sql-1.0-SNAPSHOT-jar-with-dependencies.jar 2> streaming-sql.err 
+java -jar target/streaming-sql-1.0-SNAPSHOT.jar 2> streaming-sql.err
+

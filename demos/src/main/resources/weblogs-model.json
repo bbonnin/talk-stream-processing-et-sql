@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "defaultSchema": "logs",
+  "schemas": [ {
+      "name": "logs",
+      "tables": [ {
+        "name": "STATUS",
+        "type": "custom",
+        "factory": "org.apache.calcite.adapter.csv.CsvTableFactory",
+        "operand": {
+          "file": "logs/STATUS.csv"
+        }
+      }, {
+        "name": "WEBLOGS",
+        "type": "custom",
+        "factory": "org.apache.calcite.adapter.csv.CsvStreamTableFactory",
+        "stream": {
+          "stream": true
+        },
+        "operand": {
+          "file": "logs/WEBLOGS.csv",
+          "flavor": "scannable"
+        }
+      } ]
+    }
+  ]
+}
