@@ -9,7 +9,7 @@ For the demo, first start the log generator
 mvn -Ploggen exec:java
 ```
 
-## streaming-sql
+### streaming-sql
 
 ```bash
 ./streaming-sql
@@ -40,7 +40,7 @@ GROUP BY HOP(rowtime, INTERVAL '5' SECOND, INTERVAL '10' SECOND);
 ```
 
 
-## sqlline
+### sqlline
 
 ```bash
 ./sqlline
