@@ -1,7 +1,4 @@
-package io.millesabords.demo.streamingsql;
-
-import net.andreinc.mockneat.MockNeat;
-import net.andreinc.mockneat.types.enums.IPv4Type;
+package io.millesabords.demo.streamingsql.producer;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,29 +8,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class LogProvider {
+public class SocketLogProducer extends LogProducer {
 
-    private static final String[] STATUS = {
-            "200", "403", "404", "500"
-    };
+    private ServerSocket serverSocket;
 
-    private static final String[] URLS = {
-            "/home", "/products", "/commands", "/help"
-    };
+    private final List<Socket> clientSockets = new LinkedList<>();
 
-    private static ServerSocket serverSocket;
-
-    private static final List<Socket> clientSockets = new LinkedList<>();
-
-    private static final Random random = new Random();
+    private final Random random = new Random();
 
     public static void main(final String[] args) {
+        new SocketLogProducer().run();
+    }
+
+    public void run() {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             closeConnections();
         }));
-
-        final MockNeat mock = MockNeat.threadLocal();
 
         try {
             serverSocket = new ServerSocket(5000);
@@ -50,12 +41,7 @@ public class LogProvider {
                         final PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
                         while (true) {
-                            out.println(String.join("\t",
-                                    Long.toString(System.currentTimeMillis()),
-                                    mock.ipv4s().type(IPv4Type.CLASS_A).val(),
-                                    mock.from(URLS).val(),
-                                    mock.from(STATUS).val(),
-                                    mock.ints().range(100, 5000).valStr()));
+                            out.println(newCsvLog("\t"));
                             Thread.sleep(random.nextInt(10) + 50);
                         }
                     }
@@ -70,7 +56,7 @@ public class LogProvider {
         }
     }
 
-    private static void closeConnections() {
+    private void closeConnections() {
         System.out.println("Stopping server");
         try {
             for (final Socket clientSocket: clientSockets) {

@@ -1,9 +1,12 @@
 package io.millesabords.demo.streamingsql.flink;
 
+import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.types.Row;
 
 public class LogStreamSqlProcessor extends LogStreamProcessor {
+
+    private static boolean mustStop = false;
 
     public static void main(final String[] args) throws Exception {
         new LogStreamSqlProcessor().run();
@@ -11,6 +14,11 @@ public class LogStreamSqlProcessor extends LogStreamProcessor {
 
     public LogStreamSqlProcessor() {
         initEnv();
+        mustStop = false;
+    }
+
+    public void stop() {
+        mustStop = true;
     }
 
     public void run(final String query) throws Exception {
@@ -43,13 +51,20 @@ public class LogStreamSqlProcessor extends LogStreamProcessor {
         tableEnv.registerDataStream("weblogs2", dataset,
                 "ts, ip_address, url, status, nb_bytes, rowtime.rowtime");
 
-        final Table table = tableEnv.sql(query);
+        final Table table = tableEnv.sqlQuery(query);
 
         if (query.toLowerCase().contains("weblogs2")) {
             tableEnv.toRetractStream(table, Row.class).print();
         }
         else {
-            tableEnv.toAppendStream(table, Row.class).print();
+            tableEnv.toAppendStream(table, Row.class)
+                    .filter(r -> {
+                        if (mustStop) {
+                            throw new InterruptedException();
+                        }
+                        return true;
+                    })
+                    .print();
         }
 
         execEnv.execute();

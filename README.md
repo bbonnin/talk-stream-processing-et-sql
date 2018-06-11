@@ -47,4 +47,24 @@ GROUP BY HOP(rowtime, INTERVAL '5' SECOND, INTERVAL '10' SECOND);
 sqlline> !connect jdbc:calcite:model=target/classes/weblogs-model.json admin admin
 ```
 
+### Storm SQL
+
+Start the env.
+```bash
+./zk-start.sh
+./kafka-start.sh
+./storm-start.sh
+```
+
+Submit the topology (sql file)
+```bash
+./submit-storm-sql.sh
+```
+
+Start the log generator (class io.millesabords.demo.streamingsql.producer.KafkaLogProducer
+
+Check the logs pushed in the topic errorlogs
+```bash
+./consumer-error.sh
+```
 

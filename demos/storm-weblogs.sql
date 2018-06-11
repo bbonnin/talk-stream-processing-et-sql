@@ -1,0 +1,3 @@
+CREATE EXTERNAL TABLE weblogs (ID INT PRIMARY KEY, TS BIGINT, IP_ADDRESS VARCHAR, URL VARCHAR, STATUS INT, NB_BYTES INT) LOCATION 'kafka://localhost:2181/brokers?topic=weblogs'
+CREATE EXTERNAL TABLE errorlogs (ID INT PRIMARY KEY, TS BIGINT, URL VARCHAR, STATUS INT, NB_BYTES INT) LOCATION 'kafka://localhost:2181/brokers?topic=errorlogs' TBLPROPERTIES '{"producer":{"bootstrap.servers":"localhost:9092","acks":"1","key.serializer":"org.apache.storm.kafka.IntSerializer","value.serializer":"org.apache.storm.kafka.ByteBufferSerializer"}}'
+INSERT INTO errorlogs SELECT  ID, TS, URL, STATUS, NB_BYTES FROM weblogs WHERE STATUS >= 400

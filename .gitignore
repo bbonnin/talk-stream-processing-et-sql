@@ -1,3 +1,5 @@
+systems
+*.out
 # Logs
 logs
 *.log

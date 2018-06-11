@@ -52,6 +52,11 @@ public class SqlCli {
                 fullQuery = fullQuery.substring(0, fullQuery.length() - 1); // Remove ;
                 fullQuery = fullQuery.replaceAll("stream", "");
                 buffer.delete(0, buffer.length());
+
+                if (fullQuery.equals("exit") || fullQuery.equals("quit")) {
+                    System.out.println("\nBye!\n");
+                    System.exit(0);
+                }
                 processRequest(fullQuery);
 
                 waitUserStop();
@@ -83,13 +88,15 @@ public class SqlCli {
 
     private static void processRequest(final String query) {
         currentWorker = new Thread(() -> {
+            LogStreamSqlProcessor processor = new LogStreamSqlProcessor();
             try {
-                new LogStreamSqlProcessor().run(query);
+                processor.run(query);
             }
             catch (final Exception e) {
                 if (!(e instanceof InterruptedException)) {
                     System.out.println("ERROR: " + e.getMessage());
                 }
+                processor.stop();
                 waitUserAction.stop();
             }
         });
