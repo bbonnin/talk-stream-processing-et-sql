@@ -28,13 +28,17 @@ public class KafkaLogProducer extends LogProducer {
         final Producer<Integer, String> producer = createProducer();
 
         try {
-            Log log = newLog();
-            final ProducerRecord<Integer, String> record = new ProducerRecord<>(TOPIC, log.getId(), log.toJson());
+            while (true) {
+                Log log = newLog();
+                final ProducerRecord<Integer, String> record = new ProducerRecord<>(TOPIC, log.getId(), log.toJson());
 
-            RecordMetadata metadata = producer.send(record).get();
+                RecordMetadata metadata = producer.send(record).get();
 
-            System.out.printf("sent record(key=%s value=%s) meta(partition=%d, offset=%d)\n",
-                    record.key(), record.value(), metadata.partition(), metadata.offset());
+                System.out.printf("sent record(key=%s value=%s) meta(partition=%d, offset=%d)\n",
+                        record.key(), record.value(), metadata.partition(), metadata.offset());
+
+                Thread.sleep(100);
+            }
         }
         finally {
             producer.flush();

@@ -23,15 +23,6 @@ public class Log {
     @SerializedName("STATUS") private int status;
     @SerializedName("NB_BYTES") private int nbBytes;
 
-    public static void main(String[] a) {
-        while (true) {
-            int i = RAND.nextInt();
-            if (i < 0) {
-                System.err.println("BOOM");
-            }
-        }
-    }
-
     public Log() {
     }
 
